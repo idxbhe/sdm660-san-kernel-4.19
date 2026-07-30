@@ -149,5 +149,9 @@ kernel/configs/android-*.cfg
 /CLANG
 /GCC
 
+# KernelSU Next
+/KernelSU-Next
+/drivers/kernelsu
+
 # Build log
 log.txt
