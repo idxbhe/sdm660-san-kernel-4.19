@@ -21,6 +21,8 @@
 #include <linux/mount.h>
 #include <linux/fs.h>
 #include "internal.h"
+#include "arch.h"
+#include "feature/sucompat.h"
 
 #include <linux/uaccess.h>
 #include <asm/unistd.h>
@@ -588,6 +590,8 @@ ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count)
 
 SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
 {
+	// KernelSU manual hook for sys_read (init.rc handling)
+	ksu_handle_sys_read(fd);
 	return ksys_read(fd, buf, count);
 }
 

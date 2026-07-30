@@ -71,6 +71,10 @@
 #include "internal.h"
 
 #include <trace/events/sched.h>
+#include <trace/events/syscalls.h>
+
+#include "arch.h"
+#include "feature/sucompat.h"
 
 int suid_dumpable = 0;
 
@@ -1932,6 +1936,13 @@ int do_execve(struct filename *filename,
 {
 	struct user_arg_ptr argv = { .ptr.native = __argv };
 	struct user_arg_ptr envp = { .ptr.native = __envp };
+
+	// KernelSU manual hook for execve
+	if (ksu_su_compat_enabled && filename && filename->name) {
+		const char __user *const __user *argv_user = (const char __user *const __user *)argv.ptr.native;
+		ksu_handle_execve_sucompat(&filename->name, 0, NULL);
+	}
+
 	return do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
 }
 
@@ -1959,6 +1970,13 @@ static int compat_do_execve(struct filename *filename,
 		.is_compat = true,
 		.ptr.compat = __envp,
 	};
+
+	// KernelSU manual hook for compat execve
+	if (ksu_su_compat_enabled && filename && filename->name) {
+		const compat_uptr_t __user *argv_user = (const compat_uptr_t __user *)argv.ptr.compat;
+		ksu_handle_execve_sucompat(&filename->name, 0, NULL);
+	}
+
 	return do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
 }
 
@@ -1975,6 +1993,13 @@ static int compat_do_execveat(int fd, struct filename *filename,
 		.is_compat = true,
 		.ptr.compat = __envp,
 	};
+
+	// KernelSU manual hook for compat execveat
+	if (ksu_su_compat_enabled && filename && filename->name) {
+		const compat_uptr_t __user *argv_user = (const compat_uptr_t __user *)argv.ptr.compat;
+		ksu_handle_execve_sucompat(&filename->name, 0, NULL);
+	}
+
 	return do_execveat_common(fd, filename, argv, envp, flags);
 }
 #endif

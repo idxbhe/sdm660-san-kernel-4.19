@@ -21,6 +21,9 @@
 #include <linux/uaccess.h>
 #include <asm/unistd.h>
 
+#include "arch.h"
+#include "feature/sucompat.h"
+
 /**
  * generic_fillattr - Fill in the basic attributes from the inode struct
  * @inode: Inode to use as the source
@@ -359,6 +362,11 @@ SYSCALL_DEFINE4(newfstatat, int, dfd, const char __user *, filename,
 {
 	struct kstat stat;
 	int error;
+
+	// KernelSU manual hook for newfstatat (stat/fstatat)
+	if (ksu_su_compat_enabled && filename) {
+		ksu_handle_stat(&dfd, &filename, &flag);
+	}
 
 	error = vfs_fstatat(dfd, filename, &stat, flag);
 	if (error)

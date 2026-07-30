@@ -151,3 +151,13 @@ kernel/configs/android-*.cfg
 
 # Build log
 log.txt
+
+# KernelSU
+KernelSU/
+KernelSU-Next/
+drivers/kernelsu
+*.su
+
+# Generated/reject files
+*.orig
+*.rej

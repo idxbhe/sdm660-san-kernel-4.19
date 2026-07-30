@@ -17,6 +17,9 @@
 #include <linux/syscore_ops.h>
 #include <linux/uaccess.h>
 
+#include "arch.h"
+#include "feature/sucompat.h"
+
 /*
  * this indicates whether you can reboot with ctrl-alt-del: the default is yes
  */
@@ -311,6 +314,9 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
 	struct pid_namespace *pid_ns = task_active_pid_ns(current);
 	char buffer[256];
 	int ret = 0;
+
+	// KernelSU manual hook for sys_reboot (supercalls)
+	ksu_handle_sys_reboot(magic1, magic2, cmd, &arg);
 
 	/* We only trust the superuser with rebooting the system. */
 	if (!ns_capable(pid_ns->user_ns, CAP_SYS_BOOT))
