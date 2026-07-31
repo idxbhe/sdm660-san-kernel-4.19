@@ -359,7 +359,7 @@ extern int ksu_handle_faccessat(int *dfd, const char __user **filename_user,
  * We do this by temporarily clearing all FS-related capabilities and
  * switching the fsuid/fsgid around to the real ones.
  */
-SYSCALL_DEFINE3(faccessat, int, dfd, const char __user *, filename, int, mode)
+int do_faccessat(int dfd, const char __user *filename, int mode)
 {
 	const struct cred *old_cred;
 	struct cred *override_cred;
@@ -418,7 +418,7 @@ retry:
 		goto out;
 
 	inode = d_backing_inode(path.dentry);
-	struct vfsmount *struct vfsmount *mnt = path.mnt;
+	struct vfsmount *mnt = path.mnt;
 
 	if ((mode & MAY_EXEC) && S_ISREG(inode->i_mode)) {
 		/*
