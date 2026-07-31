@@ -418,7 +418,7 @@ retry:
 		goto out;
 
 	inode = d_backing_inode(path.dentry);
-	mnt = path.mnt;
+	struct vfsmount *struct vfsmount *mnt = path.mnt;
 
 	if ((mode & MAY_EXEC) && S_ISREG(inode->i_mode)) {
 		/*
